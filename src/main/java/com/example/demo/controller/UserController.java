@@ -3,6 +3,8 @@ package com.example.demo.controller;
 import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,6 +35,8 @@ public class UserController {
     @RequestMapping("/getUsers2")
     public List<User> getUsers2() {
         List<User> users = userService.get2All();
+        HttpHeaders headers=new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         return users;
     }
 
