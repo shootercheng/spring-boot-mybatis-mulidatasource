@@ -4,6 +4,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.extractor.ExcelExtractor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,7 +86,8 @@ public class ExcelUtil {
         if(filePath.endsWith(EXCEL_XLS)){
             workbook = new HSSFWorkbook();
         }else if(filePath.endsWith(EXCEL_XLSX)){
-            workbook = new XSSFWorkbook();
+//            workbook = new XSSFWorkbook();
+            workbook = new SXSSFWorkbook();
         }else{
             throw new RuntimeException("excel type error");
         }
@@ -156,7 +158,7 @@ public class ExcelUtil {
     }
 
     public static List<String[]> createData(int rowSize, int colSize){
-        List<String[]> excelValueList = new ArrayList<>();
+        List<String[]> excelValueList = new ArrayList<>(rowSize);
         for(int i = 0; i < rowSize; i++){
             String[] rowData = new String[colSize];
             for(int j = 0; j < colSize; j++){
@@ -179,7 +181,7 @@ public class ExcelUtil {
         LOGGER.info("create sheet time {}", createSheesTime - startTime);
         String[] titles = {"col1","col2","col3","col4","col5",
                 "col6","col7","col8","col9","col10"};
-        List<String[]> valueList = createData(50000, titles.length);
+        List<String[]> valueList = createData(500000, titles.length);
         // Page 1
         Sheet sheet0 = workbook.getSheetAt(0);
         mergeCellTest(sheet0, cellStyle);
@@ -201,7 +203,7 @@ public class ExcelUtil {
         long startTime = System.currentTimeMillis();
         String filename = "C:/Users/chengdu/Desktop/excel/" + "multi_" + System.currentTimeMillis() + ".xlsx";
         Workbook workbook = createWorkBook(filename);
-        int sumSheet = 10;
+        int sumSheet = 50;
         String[] sheets = new String[sumSheet];
         for(int i = 0; i < sumSheet; i++){
             sheets[i] = "Page" + i;
@@ -211,10 +213,10 @@ public class ExcelUtil {
         setCellStyle(cellStyle);
         String[] titles = {"col1","col2","col3","col4","col5",
                 "col6","col7","col8","col9","col10"};
-        List<String[]> valueList = createData(10000, titles.length);
+        List<String[]> valueList = createData(100000, titles.length);
         long createSheesTime = System.currentTimeMillis();
         LOGGER.info("create sheet time {}", createSheesTime - startTime);
-        ExecutorService threadPool = Executors.newFixedThreadPool(sumSheet);
+        ExecutorService threadPool = Executors.newFixedThreadPool(10);
         List<Future<ExcelResult>> futureList = new ArrayList<>(sumSheet);
 //        ExcelTask sheet0Task = new ExcelTask(workbook.getSheetAt(0),
 //                cellStyle, titles, valueList, 1);
